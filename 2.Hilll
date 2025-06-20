@@ -1,9 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#define SIZE 2 // 2x2 matrix
-
-// Function to multiply 2x2 matrix with 2x1 vector (mod 26)
 void encrypt(char *message, int key[SIZE][SIZE]) {
     int i;
     int msgVector[SIZE];
@@ -13,11 +10,9 @@ void encrypt(char *message, int key[SIZE][SIZE]) {
     printf("\nEncrypted Text: ");
 
     for (i = 0; i < strlen(message); i += 2) {
-        // Fill message vector
         msgVector[0] = message[i] - 'A';
         msgVector[1] = message[i + 1] - 'A';
 
-        // Multiply key with message vector
         for (int row = 0; row < SIZE; row++) {
             cipherVector[row] = 0;
             for (int col = 0; col < SIZE; col++) {
@@ -26,7 +21,6 @@ void encrypt(char *message, int key[SIZE][SIZE]) {
             cipherVector[row] = cipherVector[row] % 26;
         }
 
-        // Convert back to characters
         for (int j = 0; j < SIZE; j++) {
             cipherText[j] = cipherVector[j] + 'A';
             printf("%c", cipherText[j]);
@@ -48,9 +42,8 @@ int main() {
     printf("Enter plaintext (uppercase only, even length): ");
     scanf("%s", message);
 
-    // Make sure message length is even
     if (strlen(message) % 2 != 0) {
-        strcat(message, "X"); // Padding with 'X'
+        strcat(message, "X"); 
     }
 
     encrypt(message, key);

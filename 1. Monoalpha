@@ -2,14 +2,11 @@
 #include <string.h>
 #include <ctype.h>
 
-// Define the substitution key (26 unique letters)
 char key[26] = {
     'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P',
     'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z',
     'X', 'C', 'V', 'B', 'N', 'M'
 };
-
-// Encrypt function
 void encrypt(char *plaintext, char *ciphertext) {
     for (int i = 0; plaintext[i] != '\0'; i++) {
         if (isalpha(plaintext[i])) {
@@ -21,7 +18,6 @@ void encrypt(char *plaintext, char *ciphertext) {
     }
 }
 
-// Decrypt function
 void decrypt(char *ciphertext, char *decryptedtext) {
     for (int i = 0; ciphertext[i] != '\0'; i++) {
         if (isalpha(ciphertext[i])) {

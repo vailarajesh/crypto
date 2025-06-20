@@ -1,0 +1,53 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+void generateKey(char *str, char *key) {
+    int x = strlen(str);
+    int keyLen = strlen(key);
+    for (int i = keyLen; i < x; i++)
+        key[i] = key[i % keyLen];
+    key[x] = '\0';
+}
+
+void encrypt(char *text, char *key, char *cipher) {
+    for (int i = 0; i < strlen(text); i++) {
+        cipher[i] = ((text[i] - 'A') + (key[i] - 'A')) % 26 + 'A';
+    }
+    cipher[strlen(text)] = '\0';
+}
+
+void decrypt(char *cipher, char *key, char *text) {
+    for (int i = 0; i < strlen(cipher); i++) {
+        text[i] = ((cipher[i] - key[i] + 26) % 26) + 'A';
+    }
+    text[strlen(cipher)] = '\0';
+}
+
+int main() {
+    char text[100], key[100], newKey[100], cipher[100], decryptedText[100];
+
+    printf("Enter plaintext (UPPERCASE, no spaces): ");
+    scanf("%s", text);
+
+    printf("Enter key (UPPERCASE, no spaces): ");
+    scanf("%s", key);
+
+    generateKey(text, key); 
+    strcpy(newKey, key);
+
+    encrypt(text, newKey, cipher);
+    printf("Encrypted text: %s\n", cipher);
+
+    decrypt(cipher, newKey, decryptedText);
+    printf("Decrypted text: %s\n", decryptedText);
+
+    return 0;
+}
+
+
+
+
+
+OUTPUT : "C:\Users\RAJESH\OneDrive\Pictures\Screenshots\Screenshot 2025-06-18 221951.png"
+
+OUTPUT : 

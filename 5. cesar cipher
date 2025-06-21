@@ -1,0 +1,51 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void encrypt(char *text, int key) {
+    for (int i = 0; text[i] != '\0'; i++) {
+        char ch = text[i];
+        if (isupper(ch))
+            text[i] = ((ch - 'A' + key) % 26) + 'A';
+        else if (islower(ch))
+            text[i] = ((ch - 'a' + key) % 26) + 'a';
+    }
+}
+
+void decrypt(char *text, int key) {
+    for (int i = 0; text[i] != '\0'; i++) {
+        char ch = text[i];
+        if (isupper(ch))
+            text[i] = ((ch - 'A' - key + 26) % 26) + 'A';
+        else if (islower(ch))
+            text[i] = ((ch - 'a' - key + 26) % 26) + 'a';
+    }
+}
+
+int main() {
+    char message[100];
+    int key;
+
+    printf("Enter message: ");
+    fgets(message, sizeof(message), stdin);
+
+    message[strcspn(message, "\n")] = 0;
+
+    printf("Enter shift key (0-25): ");
+    scanf("%d", &key);
+
+    encrypt(message, key);
+    printf("Encrypted message: %s\n", message);
+
+    decrypt(message, key);
+    printf("Decrypted message: %s\n", message);
+
+    return 0;
+}
+
+
+
+
+
+
+OUTPUT :   "C:\Users\RAJESH\OneDrive\Pictures\Screenshots\Screenshot 2025-06-21 083512.png"

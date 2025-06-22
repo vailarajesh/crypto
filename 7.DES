@@ -1,0 +1,67 @@
+#include <stdio.h>
+#include <string.h>
+
+#define ROUNDS 16
+unsigned int f(unsigned int half, unsigned int subkey) {
+    return (half ^ subkey) ^ ((half << 3) | (half >> 5));  
+}
+void generate_subkeys(unsigned int main_key, unsigned int subkeys[ROUNDS]) {
+    for (int i = 0; i < ROUNDS; i++) {
+        subkeys[i] = (main_key >> i) ^ (0x0F0F0F0F ^ i);  // Sample key schedule
+    }
+}
+
+void encrypt_des_like(unsigned char *block, unsigned int key) {
+    unsigned int left, right, temp;
+    unsigned int subkeys[ROUNDS];
+    left = (block[0] << 24) | (block[1] << 16) | (block[2] << 8) | block[3];
+    right = (block[4] << 24) | (block[5] << 16) | (block[6] << 8) | block[7];
+
+    generate_subkeys(key, subkeys);
+
+    for (int i = 0; i < ROUNDS; i++) {
+        temp = right;
+        right = left ^ f(right, subkeys[i]);
+        left = temp;
+    }
+    block[0] = (right >> 24) & 0xFF;
+    block[1] = (right >> 16) & 0xFF;
+    block[2] = (right >> 8) & 0xFF;
+    block[3] = right & 0xFF;
+    block[4] = (left >> 24) & 0xFF;
+    block[5] = (left >> 16) & 0xFF;
+    block[6] = (left >> 8) & 0xFF;
+    block[7] = left & 0xFF;
+}
+
+int main() {
+    unsigned char plaintext[9];
+    unsigned int key;
+
+    printf("Enter 8-character plaintext: ");
+    fgets(plaintext, 9, stdin);
+
+    if (strlen(plaintext) < 8) {
+        printf("Please enter exactly 8 characters.\n");
+        return 1;
+    }
+
+    printf("Enter numeric 32-bit key (e.g. 12345678): ");
+    scanf("%u", &key);
+
+    encrypt_des_like(plaintext, key);
+
+    printf("Encrypted Block (Hex): ");
+    for (int i = 0; i < 8; i++) {
+        printf("%02X ", plaintext[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
+
+
+
+
+
+"C:\Users\RAJESH\OneDrive\Pictures\Screenshots\Screenshot 2025-06-22 103656.png"

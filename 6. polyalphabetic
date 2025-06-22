@@ -1,0 +1,58 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+void to_uppercase(char *text) {
+    for (int i = 0; text[i]; i++)
+        text[i] = toupper(text[i]);
+}
+
+void generate_key(char *plaintext, char *keyword, char *key) {
+    int ptLen = strlen(plaintext);
+    int keyLen = strlen(keyword);
+
+    for (int i = 0, j = 0; i < ptLen; i++) {
+        key[i] = keyword[j];
+        j = (j + 1) % keyLen;
+    }
+    key[ptLen] = '\0';
+}
+
+void encrypt(char *plaintext, char *key, char *ciphertext) {
+    for (int i = 0; plaintext[i]; i++) {
+        ciphertext[i] = ((plaintext[i] - 'A') + (key[i] - 'A')) % 26 + 'A';
+    }
+    ciphertext[strlen(plaintext)] = '\0';
+}
+
+void decrypt(char *ciphertext, char *key, char *plaintext) {
+    for (int i = 0; ciphertext[i]; i++) {
+        plaintext[i] = ((ciphertext[i] - key[i] + 26) % 26) + 'A';
+    }
+    plaintext[strlen(ciphertext)] = '\0';
+}
+
+int main() {
+    char plaintext[100], keyword[100], key[100], ciphertext[100], decrypted[100];
+
+    printf("Enter plaintext (only letters): ");
+    scanf("%s", plaintext);
+    printf("Enter keyword (only letters): ");
+    scanf("%s", keyword);
+
+    to_uppercase(plaintext);
+    to_uppercase(keyword);
+
+    generate_key(plaintext, keyword, key);
+    encrypt(plaintext, key, ciphertext);
+    decrypt(ciphertext, key, decrypted);
+
+    printf("\nGenerated Key: %s", key);
+    printf("\nEncrypted Text (Cipher): %s", ciphertext);
+    printf("\nDecrypted Text: %s\n", decrypted);
+
+    return 0;
+}
+
+
+"C:\Users\RAJESH\OneDrive\Pictures\Screenshots\Screenshot 2025-06-22 105700.png"

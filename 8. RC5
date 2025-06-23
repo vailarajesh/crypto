@@ -1,0 +1,100 @@
+#include <stdio.h>
+#include <stdint.h>
+#include <string.h>
+#include <stdlib.h>
+
+#define w 32            
+#define r 12            
+#define Pw 0xB7E15163    
+#define Qw 0x9E3779B9    
+
+uint32_t S[2 * r + 2];   
+
+uint32_t ROTL(uint32_t x, uint32_t y) {
+    return (x << (y & (w - 1))) | (x >> (w - (y & (w - 1))));
+}
+
+uint32_t ROTR(uint32_t x, uint32_t y) {
+    return (x >> (y & (w - 1))) | (x << (w - (y & (w - 1))));
+}
+
+void RC5_KeySchedule(uint8_t *key) {
+    uint32_t L[4] = {0};
+    for (int i = b - 1; i >= 0; i--) {
+        L[i / 4] = (L[i / 4] << 8) + key[i];
+    }
+
+    S[0] = Pw;
+    for (int i = 1; i < 2 * r + 2; i++) {
+        S[i] = S[i - 1] + Qw;
+    }
+
+    uint32_t A = 0, B = 0;
+    int i = 0, j = 0;
+    for (int k = 0; k < 3 * (2 * r + 2); k++) {
+        A = S[i] = ROTL(S[i] + A + B, 3);
+        B = L[j] = ROTL(L[j] + A + B, A + B);
+        i = (i + 1) % (2 * r + 2);
+        j = (j + 1) % 4;
+    }
+}
+
+void RC5_Encrypt(uint32_t *pt, uint32_t *ct) {
+    uint32_t A = pt[0] + S[0];
+    uint32_t B = pt[1] + S[1];
+
+    for (int i = 1; i <= r; i++) {
+        A = ROTL((A ^ B), B) + S[2 * i];
+        B = ROTL((B ^ A), A) + S[2 * i + 1];
+    }
+
+    ct[0] = A;
+    ct[1] = B;
+}
+
+void RC5_Decrypt(uint32_t *ct, uint32_t *pt) {
+    uint32_t B = ct[1];
+    uint32_t A = ct[0];
+
+    for (int i = r; i >= 1; i--) {
+        B = ROTR(B - S[2 * i + 1], A) ^ A;
+        A = ROTR(A - S[2 * i], B) ^ B;
+    }
+
+    pt[1] = B - S[1];
+    pt[0] = A - S[0];
+}
+
+int main() {
+    uint8_t key[b];
+    uint32_t plaintext[2];
+    uint32_t ciphertext[2];
+    uint32_t decrypted[2];
+
+  
+    printf("Enter a 16-byte key: ");
+    fgets((char *)key, sizeof(key), stdin);
+    size_t len = strlen((char *)key);
+    if (len < b) {
+        for (size_t i = len; i < b; i++) key[i] = 0;
+    }
+
+    printf("Enter 32-bit plaintext part 1 (A): ");
+    scanf("%u", &plaintext[0]);
+
+    printf("Enter 32-bit plaintext part 2 (B): ");
+    scanf("%u", &plaintext[1]);
+
+    RC5_KeySchedule(key);
+
+    RC5_Encrypt(plaintext, ciphertext);
+    printf("\nEncrypted:\nA = %08X\nB = %08X\n", ciphertext[0], ciphertext[1]);
+
+    RC5_Decrypt(ciphertext, decrypted);
+    printf("\nDecrypted:\nA = %08X\nB = %08X\n", decrypted[0], decrypted[1]);
+
+    return 0;
+}
+
+
+OUTPUT  :  "C:\Users\RAJESH\OneDrive\Pictures\Screenshots\Screenshot 2025-06-23 082510.png"

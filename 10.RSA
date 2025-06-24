@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <math.h>
+
+long int p, q, n, t, e, d;
+int prime(long int);
+long int gcd(long int, long int);
+void encrypt();
+void decrypt();
+char msg[100];
+long int encrypted[100], decrypted[100];
+
+int main() {
+    int i;
+    printf("Enter first prime number (p): ");
+    scanf("%ld", &p);
+    if (!prime(p)) {
+        printf("p is not a prime number.\n");
+        return 1;
+    }
+
+    printf("Enter second prime number (q): ");
+    scanf("%ld", &q);
+    if (!prime(q) || p == q) {
+        printf("q is not a valid prime number or equal to p.\n");
+        return 1;
+    }
+
+    n = p * q;
+    t = (p - 1) * (q - 1);
+
+    for (e = 2; e < t; e++) {
+        if (gcd(e, t) == 1)
+            break;
+    }
+
+    for (d = 1; (d * e) % t != 1; d++);
+
+    printf("Public Key: (e=%ld, n=%ld)\n", e, n);
+    printf("Private Key: (d=%ld, n=%ld)\n", d, n);
+
+    printf("Enter message (in capital letters A-Z): ");
+    scanf("%s", msg);
+
+    encrypt();
+    decrypt();
+
+    return 0;
+}
+
+int prime(long int num) {
+    int i;
+    for (i = 2; i <= sqrt(num); i++) {
+        if (num % i == 0)
+            return 0;
+    }
+    return 1;
+}
+
+long int gcd(long int a, long int b) {
+    if (b == 0)
+        return a;
+    else
+        return gcd(b, a % b);
+}
+
+void encrypt() {
+    int i;
+    for (i = 0; msg[i] != '\0'; i++) {
+        encrypted[i] = 1;
+        long int m = msg[i] - 65; // A = 0
+        for (int j = 0; j < e; j++)
+            encrypted[i] = (encrypted[i] * m) % n;
+    }
+    printf("Encrypted: ");
+    for (i = 0; msg[i] != '\0'; i++)
+        printf("%ld ", encrypted[i]);
+    printf("\n");
+}
+
+void decrypt() {
+    int i;
+    for (i = 0; msg[i] != '\0'; i++) {
+        decrypted[i] = 1;
+        for (int j = 0; j < d; j++)
+            decrypted[i] = (decrypted[i] * encrypted[i]) % n;
+    }
+
+    printf("Decrypted: ");
+    for (i = 0; msg[i] != '\0'; i++)
+        printf("%c", decrypted[i] + 65);
+    printf("\n");
+}
+
+
+
+C:\Users\RAJESH\OneDrive\Pictures\Screenshots\Screenshot 2025-06-24 122422.png

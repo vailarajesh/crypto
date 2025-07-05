@@ -1,4 +1,4 @@
-#include <stdio.h>
+tur#include <stdio.h>
 #include <string.h>
 #include <time.h>
 
@@ -54,4 +54,5 @@ int main() {
     char authenticator2[64]; createTimestamp(authenticator2);
     requestService(&ticket_v, authenticator2, sessionKey_c_v);
 
-    r
+    return 0;
+}
